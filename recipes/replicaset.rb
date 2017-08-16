@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Recipe:: replicaset
 #
 # Copyright 2011, edelight GmbH
@@ -22,7 +22,7 @@
 node.normal['mongodb']['is_replicaset'] = true
 node.normal['mongodb']['cluster_name'] = node['mongodb']['cluster_name']
 
-include_recipe 'sc-mongodb::install'
+include_recipe 'mongodb::install'
 
 ruby_block 'chef_gem_at_converge_time' do
   block do

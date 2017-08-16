@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'sc-mongodb::default' do
+describe 'mongodb::default' do
   context 'with default node attributes' do
     # mongod_conf_XXXX: the variables are a copy of what is in the default
     # attributes file so that the OS's can be tested for correct attribute
@@ -107,8 +107,8 @@ describe 'sc-mongodb::default' do
 
     # All tests in this section run for all OS's
     shared_examples_for 'default recipe' do
-      it 'should include "sc-mongodb::install" recipe' do
-        expect_any_instance_of(Chef::Recipe).to receive(:include_recipe).with('sc-mongodb::install')
+      it 'should include "mongodb::install" recipe' do
+        expect_any_instance_of(Chef::Recipe).to receive(:include_recipe).with('mongodb::install')
         chef_run
       end
 
@@ -129,7 +129,7 @@ describe 'sc-mongodb::default' do
       it 'should create "/etc/mongod.conf install" template' do
         expect(chef_run).to create_template_if_missing('/etc/mongod.conf install').with(
           path: '/etc/mongod.conf',
-          cookbook: 'sc-mongodb',
+          cookbook: 'mongodb',
           source: 'mongodb.conf.erb',
           owner: 'root',
           group: 'root',
@@ -148,7 +148,7 @@ describe 'sc-mongodb::default' do
         mode = mongod_init_source == 'debian-mongodb.upstart.erb' ? '0644' : '0755'
         expect(chef_run).to create_template_if_missing("#{mongod_init_file} install").with(
           path: mongod_init_file,
-          cookbook: 'sc-mongodb',
+          cookbook: 'mongodb',
           source: mongod_init_source,
           owner: 'root',
           group: 'root',
@@ -181,7 +181,7 @@ describe 'sc-mongodb::default' do
       it 'should create sysconfig template' do
         expect(chef_run).to create_template(mongod_sysconfig_file).with(
           path: mongod_sysconfig_file,
-          cookbook: 'sc-mongodb',
+          cookbook: 'mongodb',
           source: 'mongodb.sysconfig.erb',
           owner: 'root',
           group: 'root',
@@ -201,7 +201,7 @@ describe 'sc-mongodb::default' do
       it 'should create "/etc/mongod.conf" template' do
         expect(chef_run).to create_template('/etc/mongod.conf').with(
           path: '/etc/mongod.conf',
-          cookbook: 'sc-mongodb',
+          cookbook: 'mongodb',
           source: 'mongodb.conf.erb',
           owner: 'root',
           group: 'root',
@@ -236,7 +236,7 @@ describe 'sc-mongodb::default' do
         mode = mongod_init_source == 'debian-mongodb.upstart.erb' ? '0644' : '0755'
         expect(chef_run).to create_template(mongod_init_file).with(
           path: mongod_init_file,
-          cookbook: 'sc-mongodb',
+          cookbook: 'mongodb',
           source: mongod_init_source,
           owner: 'root',
           group: 'root',

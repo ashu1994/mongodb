@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Recipe:: shard
 #
 # Copyright 2011, edelight GmbH
@@ -26,7 +26,7 @@ node.normal['mongodb']['shard_name'] = node['mongodb']['shard_name']
 node.normal['mongodb']['is_replicaset'] = node['mongodb']['is_replicaset']
 node.normal['mongodb']['cluster_name'] = node['mongodb']['cluster_name']
 
-include_recipe 'sc-mongodb::install'
+include_recipe 'mongodb::install'
 
 ruby_block 'chef_gem_at_converge_time' do
   block do

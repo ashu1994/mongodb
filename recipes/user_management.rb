@@ -21,7 +21,7 @@
 # limitations under the License.
 #
 
-include_recipe 'sc-mongodb::mongo_gem'
+include_recipe 'mongodb::mongo_gem'
 
 users = []
 admin = node['mongodb']['admin']
@@ -39,7 +39,7 @@ users.each do |user|
     roles user['roles']
     database user['database']
     connection node['mongodb']
-    if node.recipe?('sc-mongodb::mongos') || node.recipe?('sc-mongodb::replicaset')
+    if node.recipe?('mongodb::mongos') || node.recipe?('mongodb::replicaset')
       # If it's a replicaset or mongos, don't make any users until the end
       action :nothing
       subscribes :add, 'ruby_block[config_replicaset]', :delayed

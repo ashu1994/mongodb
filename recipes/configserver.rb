@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Recipe:: configserver
 #
 # Copyright 2011, edelight GmbH
@@ -24,7 +24,7 @@
 node.override['mongodb']['is_configserver'] = true
 node.override['mongodb']['cluster_name'] = node['mongodb']['cluster_name']
 
-include_recipe 'sc-mongodb::install'
+include_recipe 'mongodb::install'
 
 # mongodb_instance will set configsvr = true in the config file.
 # http://docs.mongodb.org/manual/reference/configuration-options/#sharded-cluster-options

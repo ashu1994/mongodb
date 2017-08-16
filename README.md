@@ -1,4 +1,4 @@
-# sc-MongoDB Cookbook
+# MongoDB Cookbook
 
 [![Build Status](https://travis-ci.org/sous-chefs/mongodb.svg)](https://travis-ci.org/sous-chefs/mongodb)
 
@@ -137,7 +137,7 @@ mmsBaseUrl=https://mms.mongodb.com
 Simply add
 
 ```ruby
-include_recipe "sc-mongodb::default"
+include_recipe "mongodb::default"
 ```
 
 to your recipe. This will run the mongodb instance as configured by your distribution.
@@ -167,7 +167,7 @@ The result is a new system service with
 
 ### Replicasets
 
-Add `sc-mongodb::replicaset` (instead of `sc-mongodb::default`) to the node's run_list. Also choose a name for your
+Add `mongodb::replicaset` (instead of `mongodb::default`) to the node's run_list. Also choose a name for your
 replicaset cluster and set the value of `node['mongodb']['cluster_name']` for each
 member to this name.
 
@@ -181,14 +181,14 @@ Let's have a look at a simple sharding setup, consisting of two shard servers, o
 config server and one mongos.
 
 First we would like to configure the two shards. For doing so, just use
-`sc-mongodb::shard` in the node's run_list and define a unique `mongodb['shard_name']`
+`mongodb::shard` in the node's run_list and define a unique `mongodb['shard_name']`
 for each of these two nodes, say "shard1" and "shard2".
 
-Then configure a node to act as a config server - by using the `sc-mongodb::configserver`
+Then configure a node to act as a config server - by using the `mongodb::configserver`
 recipe.
 
 And finally you need to configure the mongos. This can be done by using the
-`sc-mongodb::mongos` recipe. The mongos needs some special configuration, as these
+`mongodb::mongos` recipe. The mongos needs some special configuration, as these
 mongos are actually doing the configuration of the whole sharded cluster.
 Most importantly you need to define what collections should be sharded by setting the
 attribute `mongodb['sharded_collections']`:
@@ -215,7 +215,7 @@ This is esp. important when you want to replicate shards.
 ### Sharding + Replication
 
 The setup is not much different to the one described above. All you have to do is add the
-`sc-mongodb::replicaset` recipe to all shard nodes, and make sure that all shard
+`mongodb::replicaset` recipe to all shard nodes, and make sure that all shard
 nodes which should be in the same replicaset have the same shard name.
 
 For more details, you can find a [tutorial for Sharding + Replication](https://github.com/edelight/chef-mongodb/wiki/MongoDB%3A-Replication%2BSharding) in the wiki.
@@ -234,7 +234,7 @@ production MongoDB deployments.
 
 To setup MMS, simply set your keys in
 `node['mongodb']['mms_agent']['api_key']` and then add the
-`sc-mongodb::mms_monitoring_agent` recipe to your run list. Your current keys
+`mongodb::mms_monitoring_agent` recipe to your run list. Your current keys
 should be available at your [MMS Settings page](https://mms.mongodb.com/settings).
 
 The agent install and configurations is also available via a custom resource for
@@ -252,11 +252,11 @@ end
 
 ### User Management
 
-**NOTE:** Using the `sc-mongodb::user_management` is not secure since passwords are stored plain
+**NOTE:** Using the `mongodb::user_management` is not secure since passwords are stored plain
 text in your node attributes.  Please concider using a wrapper recipe with encrypted data bags
 when using this cookbook in production.
 
-An optional recipe is `sc-mongodb::user_management` which will enable authentication in
+An optional recipe is `mongodb::user_management` which will enable authentication in
 the configuration file by default and create any users in the `node['mongodb']['users']`.
 The users array expects a hash of username, password, roles, and database. Roles should be
 an array of roles the user should have on the database given.

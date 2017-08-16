@@ -1,4 +1,4 @@
-include_attribute 'sc-mongodb::default'
+include_attribute 'mongodb::default'
 
 # mongod defaults
 default['mongodb']['sysconfig']['mongod']['DAEMON'] = '/usr/bin/$NAME'

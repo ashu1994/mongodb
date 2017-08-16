@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Resource:: agent
 #
 # Copyright 2017, Grant Ridder

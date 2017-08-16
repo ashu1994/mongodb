@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Recipe:: mongos
 #
 # Copyright 2011, edelight GmbH
@@ -23,7 +23,7 @@
 
 node.override['mongodb']['is_mongos'] = true
 
-include_recipe 'sc-mongodb::install'
+include_recipe 'mongodb::install'
 
 ruby_block 'chef_gem_at_converge_time' do
   block do

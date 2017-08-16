@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Definition:: mongodb
 #
 # Copyright 2011, edelight GmbH
@@ -34,11 +34,11 @@ class Chef::ResourceDefinitionList::MongoDB
     begin
       connection = nil
       rescue_connection_failure do
-        connection = Mongo::Connection.new('localhost', node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
+        connection = Mongo::Connection.new(node['ipaddress'], node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
         connection.database_names # check connection
       end
     rescue => e
-      Chef::Log.warn("Could not connect to database: 'localhost:#{node['mongodb']['config']['port']}', reason: #{e}")
+      Chef::Log.warn("Could not connect to database: '#{node['ipaddress']}:#{node['mongodb']['config']['port']}', reason: #{e}")
       return
     end
 
@@ -51,7 +51,7 @@ class Chef::ResourceDefinitionList::MongoDB
       # Ignore any vagrant hosts since we stub all of the nodes in testing
       next if members[n]['fqdn'] =~ /\.vagrantup\.com$/
 
-      host = "#{members[n]['fqdn']}:#{members[n]['mongodb']['config']['mongod']['net']['port']}"
+      host = "#{members[n]['ipaddress']}:#{members[n]['mongodb']['config']['mongod']['net']['port']}"
       rs_options[host] = {}
 
       rs_options[host]['arbiterOnly'] = true if members[n]['mongodb']['replica_arbiter_only']
@@ -102,7 +102,7 @@ class Chef::ResourceDefinitionList::MongoDB
     if result.fetch('ok', nil) == 1
       # everything is fine, do nothing
     elsif result.fetch('errmsg', nil) =~ /(\S+) is already initiated/ || (result.fetch('errmsg', nil) == 'already initialized') || (result.fetch('errmsg', nil) =~ /is not empty on the initiating member/)
-      server, port = Regexp.last_match.nil? || Regexp.last_match.length < 2 ? ['localhost', node['mongodb']['config']['port']] : Regexp.last_match[1].split(':')
+      server, port = Regexp.last_match.nil? || Regexp.last_match.length < 2 ? [ node['ipaddress'] , node['mongodb']['config']['port']] : Regexp.last_match[1].split(':')
       begin
         connection = Mongo::Connection.new(server, port, op_timeout: 5, slave_ok: true)
       rescue
@@ -122,7 +122,7 @@ class Chef::ResourceDefinitionList::MongoDB
         rs_member_ips.each do |mem_h|
           members.each do |n|
             ip, prt = mem_h['host'].split(':')
-            mapping["#{ip}:#{prt}"] = "#{n['fqdn']}:#{prt}" if ip == n['ipaddress']
+            mapping["#{ip}:#{prt}"] = "#{n['ipaddress']}:#{prt}" if ip == n['ipaddress']
           end
         end
         config['members'].map! do |m|
@@ -145,7 +145,7 @@ class Chef::ResourceDefinitionList::MongoDB
           result = admin.command(cmd, check_response: false)
         rescue Mongo::ConnectionFailure
           # reconfiguring destroys existing connections, reconnect
-          connection = Mongo::Connection.new('localhost', node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
+          connection = Mongo::Connection.new(node['ipaddress'], node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
           config = connection['local']['system']['replset'].find_one('_id' => name)
           # Validate configuration change
           if config['members'] == rs_members
@@ -188,7 +188,7 @@ class Chef::ResourceDefinitionList::MongoDB
           case remaining_members
           when 0
             force = true
-            rs_connection = Mongo::Connection.new('localhost', node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
+            rs_connection = Mongo::Connection.new(node['ipaddress'], node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
           else
             rs_connection = Mongo::ReplSetConnection.new(old_members)
           end
@@ -205,7 +205,7 @@ class Chef::ResourceDefinitionList::MongoDB
           result = admin.command(cmd, force: force, check_response: false)
         rescue Mongo::ConnectionFailure
           # reconfiguring destroys existing connections, reconnect
-          connection = Mongo::Connection.new('localhost', node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
+          connection = Mongo::Connection.new(node['ipaddress'], node['mongodb']['config']['port'], op_timeout: 5, slave_ok: true)
           config = connection['local']['system']['replset'].find_one('_id' => name)
           # Validate configuration change
           if config['members'] == rs_members
@@ -230,7 +230,7 @@ class Chef::ResourceDefinitionList::MongoDB
     shard_groups = Hash.new { |h, k| h[k] = [] }
 
     shard_nodes.each do |n|
-      if n['recipes'].include?('sc-mongodb::replicaset')
+      if n['recipes'].include?('mongodb::replicaset')
         # do not include hidden members when calling addShard
         # see https://jira.mongodb.org/browse/SERVER-9882
         next if n['mongodb']['replica_hidden']
@@ -238,7 +238,7 @@ class Chef::ResourceDefinitionList::MongoDB
       else
         key = '_single'
       end
-      shard_groups[key] << "#{n['fqdn']}:#{n['mongodb']['config']['mongod']['net']['port']}"
+      shard_groups[key] << "#{n['ipaddress']}:#{n['mongodb']['config']['mongod']['net']['port']}"
     end
     Chef::Log.info(shard_groups.inspect)
 
@@ -257,17 +257,17 @@ class Chef::ResourceDefinitionList::MongoDB
     begin
       connection = nil
       rescue_connection_failure do
-        connection = Mongo::Connection.new('localhost', mongo_port, op_timeout: 5)
+        connection = Mongo::Connection.new(node['ipaddress'], mongo_port, op_timeout: 5)
       end
     rescue => e
-      Chef::Log.warn("Could not connect to database: 'localhost:#{mongo_port}', reason #{e}")
+      Chef::Log.warn("Could not connect to database: '#{node['ipaddress']}:#{mongo_port}', reason #{e}")
       return
     end
 
     admin = connection['admin']
 
     # If we require authentication on mongos / mongod, need to authenticate to run these commands
-    if node.recipe?('sc-mongodb::user_management')
+    if node.recipe?('mongodb::user_management')
       begin
         admin.authenticate(node['mongodb']['authentication']['username'], node['mongodb']['authentication']['password'])
       rescue Mongo::AuthenticationError => e
@@ -309,17 +309,17 @@ class Chef::ResourceDefinitionList::MongoDB
     begin
       connection = nil
       rescue_connection_failure do
-        connection = Mongo::Connection.new('localhost', mongo_port, op_timeout: 5)
+        connection = Mongo::Connection.new(node['ipaddress'], mongo_port, op_timeout: 5)
       end
     rescue => e
-      Chef::Log.warn("Could not connect to database: 'localhost:#{mongo_port}', reason #{e}")
+      Chef::Log.warn("Could not connect to database: '#{node['ipaddress']}:#{mongo_port}', reason #{e}")
       return
     end
 
     admin = connection['admin']
 
     # If we require authentication on mongos / mongod, need to authenticate to run these commands
-    if node.recipe?('sc-mongodb::user_management')
+    if node.recipe?('mongodb::user_management')
       begin
         admin.authenticate(node['mongodb']['authentication']['username'], node['mongodb']['authentication']['password'])
       rescue Mongo::AuthenticationError => e

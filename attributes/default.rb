@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: sc-mongodb
+# Cookbook Name:: mongodb
 # Attributes:: default
 #
 # Copyright 2010, edelight GmbH
@@ -107,7 +107,7 @@ else
   Chef::Log.error("Unsupported Platform Family: #{node['platform_family']}")
 end
 
-default['mongodb']['template_cookbook'] = 'sc-mongodb'
+default['mongodb']['template_cookbook'] = 'mongodb'
 
 default['mongodb']['key_file_content'] = nil
 

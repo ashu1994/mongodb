@@ -22,7 +22,7 @@
 #
 
 # install the mongodb org repo if necessary
-include_recipe 'sc-mongodb::mongodb_org_repo' if node['mongodb']['install_method'] == 'mongodb-org'
+include_recipe 'mongodb::mongodb_org_repo' if node['mongodb']['install_method'] == 'mongodb-org'
 
 # TODO: still need all of the tools?
 # yum_package[autoconf, bison, flex, gcc, gcc-c++, gettext, kernel-devel, make, m4, ncurses-devel, patch]

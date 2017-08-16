@@ -3,7 +3,7 @@
 # dump anything into default['mongodb']['config']['mongod'][<setting>] = <value>
 # these options are in the order of mongodb docs
 
-include_attribute 'sc-mongodb::default'
+include_attribute 'mongodb::default'
 
 # mongod defaults
 default['mongodb']['config']['mongod']['net']['port'] = 27017

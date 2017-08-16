@@ -6,7 +6,7 @@
   "automatic": {
     "hostname": "vagrant.vm",
     "os": "centos",
-    "recipes": ["sc-mongodb::replicaset", "sc-mongodb::install", "sc-mongodb::mongodb_org_repo"]
+    "recipes": ["mongodb::replicaset", "mongodb::install", "mongodb::mongodb_org_repo"]
   },
   "normal": {
     "fqdn": "mongo1",

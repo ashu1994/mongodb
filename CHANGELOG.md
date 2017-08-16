@@ -1,4 +1,4 @@
-# sc-mongodb Cookbook CHANGELOG
+# mongodb Cookbook CHANGELOG
 
 ## Unreleased
 
