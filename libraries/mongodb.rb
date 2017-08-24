@@ -45,7 +45,7 @@ class Chef::ResourceDefinitionList::MongoDB
     # Want the node originating the connection to be included in the replicaset
     members << node unless members.any? { |m| m.name == node.name }
     members.sort! { |x, y| x.name <=> y.name }
-    Chef::Log.debug("Members found while configuring replicaset - #{8embers.inspect}")
+    Chef::Log.debug("Members found while configuring replicaset - #{members.inspect}")
     rs_members = []
     rs_options = {}
     members.each_index do |n|
