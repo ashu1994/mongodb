@@ -132,6 +132,15 @@ class Chef::ResourceDefinitionList::MongoDB
           host = mapping[m['host']]
           { '_id' => m['_id'], 'host' => host }.merge(rs_options[host])
         end
+
+        replset_versions = config['members'].map do |m|
+          replset_version_command = "mongo --host #{m['ipaddress']} --eval \"rs.slaveOk(); rs.conf();\" | grep '\"version\"' | awk -F':' '{print $2}' | awk -F',' '{print $1}'"
+          command_output = shell_out(replset_version_command)
+          Chef::Log.debug("Fetched repl version from mongo host #{m['ipaddress']}. Output is #{command_output.inspect}")
+          command_output.stdout.strip
+        end
+
+        config['version'] = replset_versions.max.to_i
         config['version'] += 1
 
         rs_connection = nil
