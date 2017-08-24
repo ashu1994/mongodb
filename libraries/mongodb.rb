@@ -118,6 +118,7 @@ class Chef::ResourceDefinitionList::MongoDB
         # config is up-to-date, but ips are used instead of hostnames, change config to hostnames
         Chef::Log.info("Need to convert ips to hostnames for replicaset '#{name}'")
         old_members = config['members'].map { |m| m['host'] }
+        Chef::Log.info("Old members found while configuring replicaset - #{old_members.inspect}")
         mapping = {}
         rs_member_ips.each do |mem_h|
           members.each do |n|
