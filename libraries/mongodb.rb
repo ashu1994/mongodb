@@ -23,6 +23,7 @@ require 'json'
 
 class Chef::ResourceDefinitionList::MongoDB
   def self.configure_replicaset(node, name, members)
+    Chef::Log.debug("Configuring replica set #{name} on node #{node} with members #{members.inspect}")
     # lazy require, to move loading this modules to runtime of the cookbook
     require 'rubygems'
     require 'mongo'
